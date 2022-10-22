@@ -1,0 +1,169 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+import sqlite3
+
+root = tk.Tk()
+root.title("leave management system")
+root.configure(bg="gray")
+
+
+connection = sqlite3.connect('Cruz leave management system.db')
+#Assiging strings to variables
+TABLE_NAME = "management_table"
+LEAVE_ID = "leave_id"
+EMPLOYEE_NAME = "employee_name"
+LEAVE_TYPE = "leave_type"
+LEAVE_DURATION = "leave_duration"
+EMPLOYEE_POSTION= "employee_postion"
+
+
+connection.execute(" CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ( " + LEAVE_ID +
+                   " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                  EMPLOYEE_NAME + " TEXT, " + LEAVE_TYPE + " TEXT, " +
+                   LEAVE_DURATION + " TEXT, " + EMPLOYEE_POSTION + " TEXT);")
+#heading creation and styling
+appLabel = tk.Label(root, text="Leave Management System", bg="purple",fg="white",width=45)
+appLabel.config(font=("Sylfaen", 30))
+appLabel.grid(row=0, columnspan=2, padx=(10,10), pady=(5, 0))
+
+#creating objects with class
+class employee:
+    employeeName = ""
+    leaveType = ""
+    leaveDuration = ""
+    employeePostion= ""
+
+    
+#define the initialization declaration function which puts the attribute in a condition to an operation
+    def __init__(self, employeeName, leaveType, leaveDuration, employeePostion):
+        self.employeeName = employeeName
+        self.leaveType = leaveType
+        self.leaveDuration = leaveDuration
+        self.employeePostion = employeePostion
+#define function of multiple commands on-click of a button
+def fun1() :
+    nameEntry.delete(0, tk.END)
+def fun2 () :
+    tk.messagebox.showinfo("clear message", "Name cleared successfully")
+def delete1() :
+    typeEntry.delete(0, tk.END)
+def delete11 () :
+    tk.messagebox.showinfo("clear message", "Leave type cleared successfully")
+def delete2() :
+    durationEntry.delete(0, tk.END)
+def delete22 () :
+    tk.messagebox.showinfo("clear message", "Leave duration cleared successfully")
+def delete3() :
+    durationEntry.delete(0, tk.END)
+def delete33 () :
+    tk.messagebox.showinfo("clear message", "Postion number cleared successfully")
+    
+    
+     
+#create and style entry box label
+nameLabel = tk.Label(root, text="Enter employee name",bg='purple', width=40, anchor='w',
+                     font=("Sylfaen", 12)).grid(row=1, column=0, padx=(10,0))
+                                                #pady=(30, 0))
+button1 = tk.Button(root, bg = "purple" , text = "CLEAR NAME" , command=lambda: [fun1(), fun2()], width=20,height=1, font=('sylfaen', 12)).place(x=570,y=115)
+
+                                                
+typeLabel = tk.Label(root, text="Enter leave type",bg='purple', width=40, anchor='w',
+                        font=("Sylfaen", 12)).grid(row=2, column=0, padx=(10,0))
+button2 = tk.Button(root, bg = "purple" , text = "CLEAR LEAVE TYPE" , command=lambda: [delete1(),delete11()], width=20,font=('sylfaen', 12)).place(x=570,y=172)
+
+durationLabel = tk.Label(root, text="Enter leave duration",bg='purple',width=40, anchor='w',
+                      font=("Sylfaen", 12)).grid(row=3, column=0, padx=(10,0))
+button3 = tk.Button(root, bg = "purple" , text = "CLEAR LEAVE DURATION" , command=lambda: [delete2(),delete22()], width=20,font=('sylfaen', 12)).place(x=570,y=229)
+
+postionLabel = tk.Label(root, text="Enter employee postion",bg='purple',width=40, anchor='w',
+                        font=("Sylfaen", 12)).grid(row=4, column=0, padx=(10,0))
+button4 = tk.Button(root, bg = "purple" , text = "CLEAR POSTION NUMBER" , command=lambda: [delete3(),delete33()], width=20,font=('sylfaen', 12)).place(x=570,y=286)
+
+#creating and styling entrybox
+nameEntry = tk.Entry(root, width = 70)
+typeEntry = tk.Entry(root, width = 70)
+durationEntry = tk.Entry(root, width = 70)
+postionEntry = tk.Entry(root, width = 70)
+
+#entry box postioning
+nameEntry.grid(row=1, column=1, padx=(0,10), pady=(30, 20))
+typeEntry.grid(row=2, column=1, padx=(0,10), pady = 20)
+durationEntry.grid(row=3, column=1, padx=(0,10), pady = 20)
+postionEntry.grid(row=4, column=1, padx=(0,10), pady = 20)
+
+
+def takeNameInput():
+    global nameEntry, typeEntry, durationEntry, postionEntry
+    # global username, collegeName, phone, address
+    global list
+    global TABLE_NAME,  EMPLOYEE_NAME, LEAVE_TYPE, LEAVE_DURATION, EMPLOYEE_POSTION
+    username = nameEntry.get()
+    nameEntry.delete(0, tk.END)
+    typeName = typeEntry.get()
+    typeEntry.delete(0, tk.END)
+    duration = durationEntry.get()
+    durationEntry.delete(0, tk.END)
+    postion = str(postionEntry.get())
+    postionEntry.delete(0, tk.END)
+
+    # connection.execute("INSERT INTO " + TABLE_NAME + "(" + EMPLOYEE_NAME + ", " +
+    #                    LEAVE_TYPE + ", " + LEAVE_DURATION + ", " +
+    #                   EMPLOYEE_POSTION + ") VALUES ('"
+    #                    + username + "', '" + typeEntry + "', '" + duration + "', "+ postion+");")
+
+    #    connection.execute("INSERT INTO management_table (employee_name,leave_duration,employee_postion) VALUES ('akinsanya omogbolahan', '2 months', 1);")
+    sqlQuery= f"INSERT INTO {TABLE_NAME} ({EMPLOYEE_NAME},{LEAVE_TYPE},{LEAVE_DURATION},{EMPLOYEE_POSTION}) VALUES ('{username}', '{typeName}', '{duration}', {postion})"
+    connection.execute(sqlQuery)
+
+    connection.commit()
+    messagebox.showinfo("Success", "Data Saved Successfully.")
+
+#defining function "destroyRootwindow" to create second window, display database and close the root window
+def destroyRootWindow():
+    root.destroy()
+    secondWindow = tk.Tk()
+
+    secondWindow.title("Display results")
+
+    appLabel = tk.Label(secondWindow, text="Leave Management System",
+                        bg="purple",fg="white", width=50)
+    appLabel.config(font=("Syl", 30))
+    appLabel.pack()
+    tree = ttk.Treeview(secondWindow)
+    tree["columns"] = ("one", "two", "three", "four")
+
+    tree.heading("one", text="Employee Name")
+    tree.heading("two", text="Leave type")
+    tree.heading("three", text="Duration")
+    tree.heading("four", text="Postion")
+    
+
+    cursor = connection.cursor()
+
+    
+
+    cursor = connection.execute("SELECT * FROM " + TABLE_NAME + " ;")
+    i = 0
+
+    for row in cursor:
+        tree.insert('', i, text="EMPLOYEE" + str(row[0]),
+                    values=(row[1], row[2],
+                            row[3], row[4]))
+
+    tree.pack()
+    secondWindow.mainloop()
+
+
+# def printDetails():
+#     for singleItem in list:
+#         print("Student name is: %s\nCollege name is: %s\nPhone number is: %d\nAddress is: %s" %
+#               (singleItem.studentName, singleItem.collegeName, singleItem.phoneNumber, singleItem.address))
+#         print("****************************************")
+
+button = tk.Button(root, text="Take input",bg = "purple", command=lambda :takeNameInput())
+button.grid(row=5, column=0, pady=30)
+
+displayButton = tk.Button(root, text="Display result",bg = "purple", command=lambda :destroyRootWindow())
+displayButton.grid(row=5, column=1)
+
+root.mainloop()
